@@ -48,13 +48,13 @@ https.get(url, res => {
     //	try{
     		
     		var items = stuff.match(/<div class="card-title-icon-block">/g);
-    		console.log(items);
+    		//console.log(items);
 
 
-    		console.log( stuff.slice( stuff.indexOf(find3), stuff.indexOf(find4) ) );
+    		//console.log( stuff.slice( stuff.indexOf(find3), stuff.indexOf(find4) ) );
     		var tempstring = stuff.replace( stuff.slice( stuff.indexOf(find3), stuff.indexOf(find4) ), "" );
     		//console.log(tempstring);
-    		console.log( tempstring.slice( tempstring.indexOf(find3), tempstring.indexOf(find4) ) );
+    		//console.log( tempstring.slice( tempstring.indexOf(find3), tempstring.indexOf(find4) ) );
 
     //	}catch(TypeError){
 
@@ -241,8 +241,8 @@ function search_for_something(base, start, query){
 				search_for_something(base, start, query);
 			}
 			else{
-				//return console.log(final);
-				console.log("here");
+				console.log(final);
+				//console.log("here");
 				//return(final);
 				
 			}
@@ -250,12 +250,12 @@ function search_for_something(base, start, query){
 
   		});
 	});
-
+	/*
 	if(array.length == 0){
 		setTimeout(function(){ console.log("Hello"); }, 3000);
 		return array;
 	}
-
+	*/
 	
 }
 
@@ -263,6 +263,6 @@ function search_for_something(base, start, query){
 //iter_pages_search(demo_url, 1, 0)
 
 var returned_url = search_for_something(demo_url, 0, 'Cayley Graphs');
-console.log(returned_url);
+//console.log(returned_url);
 
 
