@@ -24,6 +24,10 @@ const url2 = demo_url + access_uri + file_id;
 
 var find1 = "<!--DATAVERSE CARDS-->";
 var find2 = "</table>";
+var find3 = "<a href=";
+var find4 = "</span></a>";
+var find5 = '<div class="card-title-icon-block">'
+
 
 https.get(url, res => {
   //console.log(url)
@@ -38,8 +42,26 @@ https.get(url, res => {
     //console.log(x);
     
     var stuff = body.slice( body.indexOf(find1), body.indexOf(find2) );
+    //console.log(stuff);
 
-    console.log( body.slice( body.indexOf(find1), body.indexOf(find2) ) )
+    //while(true){
+    //	try{
+    		
+    		var items = stuff.match(/<div class="card-title-icon-block">/g);
+    		console.log(items);
+
+
+    		console.log( stuff.slice( stuff.indexOf(find3), stuff.indexOf(find4) ) );
+    		var tempstring = stuff.replace( stuff.slice( stuff.indexOf(find3), stuff.indexOf(find4) ), "" );
+    		//console.log(tempstring);
+    		console.log( tempstring.slice( tempstring.indexOf(find3), tempstring.indexOf(find4) ) );
+
+    //	}catch(TypeError){
+
+    //	}
+    //}
+    //console.log( stuff.slice( stuff.indexOf(find3), stuff.indexOf(find4) ) );
+    //console.log( body.slice( body.indexOf(find1), body.indexOf(find2) ) );
     
 
     //console.log(body[0])
@@ -152,5 +174,95 @@ function iter_pages_search(base, page, start){
 
 }
 
+function search_for_something(base, start, query){
+	
+	var condition = true;
+
+	var start = start;
+
+	var rows = 10;
+
+	var total;
+
+	var final = "";
+
+	array = [];
+
+	//while(condition){
+
+	const url = base + "/api/search?q=*" + "&start=" + String(start);
+
+	//var body;
+
+	//console.log(url)
+
+	https.get(url, res => {
+
+  		res.setEncoding("utf8");
+  		let body = "";
+  		res.on("data", data => {
+    		body += data;
+  		});
+  		res.on("end", () => {
+    		body = JSON.parse(body);
+    		//console.log(body['data']['items']);
+
+    		//console.log("here")
+
+    		total = body['data']['total_count'];
+
+			var i = 0;
+
+			while( true ){
+				try{
+					if( body['data']['items'][i]['name'] == query ){
+						//console.log( "- " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")" + " url: " + body['data']['items'][i]['url']);
+						final = String(body['data']['items'][i]['url']);
+						
+						array.push(final);
+						//console.log(final);
+						//console.log(body['data']['items'][i]['url']);
+						start = total;
+						break;
+					}
+
+					i+=1;
+				}
+				catch(TypeError){
+					break;
+				}
+
+			}
+
+			start += rows;
+
+			if( start < total ){
+
+				search_for_something(base, start, query);
+			}
+			else{
+				//return console.log(final);
+				console.log("here");
+				//return(final);
+				
+			}
+
+
+  		});
+	});
+
+	if(array.length == 0){
+		setTimeout(function(){ console.log("Hello"); }, 3000);
+		return array;
+	}
+
+	
+}
+
+
 //iter_pages_search(demo_url, 1, 0)
+
+var returned_url = search_for_something(demo_url, 0, 'Cayley Graphs');
+console.log(returned_url);
+
 
