@@ -9,7 +9,7 @@ const actual_url = "https://demo.dataverse.org/dataverse/hbstest"
 
 const search_uri = "/api/search"
 
-const options = "?q=*"
+const options = "?q=*&subtree=COSgak"
 
 // Data Access API: access a data file or dataset using an ID; outlined in API spec
 const access_uri = "/api/access/datafile/"
@@ -21,6 +21,8 @@ var file_id = "2453" // Got this one from the "trees" query
 const url = actual_url + options;
 
 const url2 = demo_url + access_uri + file_id;
+
+const url3 = demo_url + search_uri + options;
 
 var find1 = "<!--DATAVERSE CARDS-->";
 var find2 = "</table>";
@@ -84,6 +86,20 @@ https.get(url, res => {
   });
 }); */
 
+/*https.get(url3, res => {
+  res.setEncoding("utf8");
+  let body = "";
+  res.on("data", data => {
+    body += data;
+  });
+  res.on("end", () => {
+    //body = JSON.parse(body);
+    console.log(
+      body
+    );
+  });
+});*/
+
 
 //This function allows you to iterate through many of the results that are generated from using the 
 // Search API
@@ -99,11 +115,7 @@ function iter_pages_search(base, page, start){
 
 	var total;
 
-	//while(condition){
-
 	const url = base + "/api/search?q=*" + "&start=" + String(start);
-
-	//var body;
 
 	//console.log(url)
 
@@ -138,19 +150,8 @@ function iter_pages_search(base, page, start){
 
 			}
 
-			/*
-			for (var i = 0; i < total; i++) {
-				console.log( "- " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")");
-			}*/
-
 			start += rows;
 			page += 1;
-
-			/*console.log("this is page " + page + ", this is start " + start + ", this is total " + total);
-
-			if( page == 5 ){
-				return 0;
-			}*/
 
 			if( start < total ){
 
@@ -160,21 +161,89 @@ function iter_pages_search(base, page, start){
 				return 0;
 			}
 
-			//condition = start < total;
-
 
   		});
 	});
 
-	//console.log("this is page " + page + ", this is start " + start + ", this is total " + total);
-	
-
-		
-	//}
 
 }
 
-function search_for_something(base, start, query){
+//Function which searches for something within its type (file, dataset, dataverse) and returns all of the urls of objects
+// with that type
+function search_for_all(base, start, type){
+
+	var condition = true;
+
+	var start = start;
+
+	var rows = 10;
+
+	var total;
+
+	var final = "";
+
+	const url = base + "/api/search?q=*&type=" + type + "&start=" + String(start);
+
+	//console.log(url)
+
+	https.get(url, res => {
+
+  		res.setEncoding("utf8");
+  		let body = "";
+  		res.on("data", data => {
+    		body += data;
+  		});
+  		res.on("end", () => {
+    		body = JSON.parse(body);
+    		//console.log(body['data']['items']);
+
+    		//console.log("here")
+
+    		//console.log(body)
+
+    		total = body['data']['total_count'];
+
+			var i = 0;
+
+			while( true ){
+				try{
+					//if( body['data']['items'][i]['name'] == query ){
+						console.log( "- " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")" + " url: " + body['data']['items'][i]['url']);
+						//final = String(body['data']['items'][i]['url']);
+						//console.log(final);
+						//console.log(body['data']['items'][i]['url']);
+						//start = total;
+						//break;
+					//}
+
+					i+=1;
+				}
+				catch(TypeError){
+					break;
+				}
+
+			}
+
+			start += rows;
+
+			if( start < total ){
+
+				search_for_all(base, start, type);
+			}
+			else{
+				//return console.log(final);
+				//return(final);
+				return 0;
+				
+			}
+
+
+  		});
+	});
+}
+
+//Function which searches for something within its type (file, dataset, dataverse) and returns the url
+function search_for_something(base, start, query, type){
 	
 	var condition = true;
 
@@ -186,11 +255,9 @@ function search_for_something(base, start, query){
 
 	var final = "";
 
-	array = [];
-
 	//while(condition){
 
-	const url = base + "/api/search?q=*" + "&start=" + String(start);
+	const url = base + "/api/search?q=*&type=" + type + "&start=" + String(start);
 
 	//var body;
 
@@ -209,6 +276,8 @@ function search_for_something(base, start, query){
 
     		//console.log("here")
 
+    		//console.log(body)
+
     		total = body['data']['total_count'];
 
 			var i = 0;
@@ -218,9 +287,7 @@ function search_for_something(base, start, query){
 					if( body['data']['items'][i]['name'] == query ){
 						//console.log( "- " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")" + " url: " + body['data']['items'][i]['url']);
 						final = String(body['data']['items'][i]['url']);
-						
-						array.push(final);
-						//console.log(final);
+						console.log(final);
 						//console.log(body['data']['items'][i]['url']);
 						start = total;
 						break;
@@ -241,28 +308,24 @@ function search_for_something(base, start, query){
 				search_for_something(base, start, query);
 			}
 			else{
-				console.log(final);
-				//console.log("here");
+				//return console.log(final);
 				//return(final);
+				return 0;
 				
 			}
 
 
   		});
 	});
-	/*
-	if(array.length == 0){
-		setTimeout(function(){ console.log("Hello"); }, 3000);
-		return array;
-	}
-	*/
-	
+
+
 }
 
 
 //iter_pages_search(demo_url, 1, 0)
 
-var returned_url = search_for_something(demo_url, 0, 'Cayley Graphs');
+//var returned_url = search_for_something(demo_url, 0, 'DatasetDiagram.png', 'file');
+search_for_all(demo_url, 0, 'file')
 //console.log(returned_url);
 
 
