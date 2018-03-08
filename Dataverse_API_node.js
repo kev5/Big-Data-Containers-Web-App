@@ -321,11 +321,170 @@ function search_for_something(base, start, query, type){
 
 }
 
+//Function that searches for a specific subtree dataverse identifier within a big dataverse
+// and ends up calling the other function which searches and returns all urls within that
+// specific subtree dataverse 
+function return_within_subtree(base, start, dverse){
+
+	var condition = true;
+
+	var start = start;
+
+	var rows = 10;
+
+	var total;
+
+	var final = "";
+
+	const url = base + "/api/search?q=*&type=dataverse" + "&start=" + String(start);
+
+	//console.log(url)
+
+	https.get(url, res => {
+
+  		res.setEncoding("utf8");
+  		let body = "";
+  		res.on("data", data => {
+    		body += data;
+  		});
+  		res.on("end", () => {
+    		body = JSON.parse(body);
+    		//console.log(body['data']['items']);
+
+    		//console.log("here")
+
+    		//console.log(body)
+
+    		total = body['data']['total_count'];
+
+			var i = 0;
+
+			while( true ){
+				try{
+					if( body['data']['items'][i]['name'] == dverse){
+						//console.log( "- " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['identifier'] + ")" + " url: " + body['data']['items'][i]['url']);
+						
+						search_within_subtree(demo_url, body['data']['items'][i]['identifier'], 0)
+
+						//final = String(body['data']['items'][i]['url']);
+						//console.log(final);
+						//console.log(body['data']['items'][i]['url']);
+						//start = total;
+						return 0;
+					}
+
+					i+=1;
+				}
+				catch(TypeError){
+					break;
+				}
+
+			}
+
+			start += rows;
+
+			if( start < total ){
+
+				search_for_dverse_identifier(base, start, dverse);
+			}
+			else{
+				//return console.log(final);
+				//return(final);
+				return 0;
+				
+			}
+
+
+  		});
+	});
+}
+
+//Function which searches and prints out all items within a subtree dataverse
+function search_within_subtree(base, subtree, start){
+
+	var condition = true;
+
+	var start = start;
+
+	var rows = 10;
+
+	var total;
+
+	var final = "";
+
+	const url = base + "/api/search?q=*&subtree=" + subtree + "&start=" + String(start);
+
+	//console.log(url)
+
+	https.get(url, res => {
+
+  		res.setEncoding("utf8");
+  		let body = "";
+  		res.on("data", data => {
+    		body += data;
+  		});
+  		res.on("end", () => {
+    		body = JSON.parse(body);
+    		//console.log(body['data']['items']);
+
+    		//console.log("here")
+
+    		//console.log(body)
+
+    		
+    		total = body['data']['total_count'];
+
+			var i = 0;
+
+			while( true ){
+				try{
+					//if( body['data']['items'][i]['name'] == query ){
+						console.log( "- " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")" + " url: " + body['data']['items'][i]['url']);
+						//final = String(body['data']['items'][i]['url']);
+						//console.log(final);
+						//console.log(body['data']['items'][i]['url']);
+						//start = total;
+						//break;
+					//}
+
+					i+=1;
+				}
+				catch(TypeError){
+					break;
+				}
+
+			}
+
+			start += rows;
+
+			if( start < total ){
+
+				search_for_all(base, start, type);
+			}
+			else{
+				//return console.log(final);
+				//return(final);
+				return 0;
+				
+			}
+
+
+  		});
+	});
+
+}
+
 
 //iter_pages_search(demo_url, 1, 0)
 
 //var returned_url = search_for_something(demo_url, 0, 'DatasetDiagram.png', 'file');
-search_for_all(demo_url, 0, 'file')
+
+//search_for_all(demo_url, 0, 'file')
+
+//search_within_subtree(demo_url, 'COSgak', 0)
+
+return_within_subtree(demo_url, 0, 'Robert')
+
 //console.log(returned_url);
 
 
