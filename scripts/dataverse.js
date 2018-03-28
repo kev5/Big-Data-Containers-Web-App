@@ -31,36 +31,6 @@ var find3 = "<a href=";
 var find4 = "</span></a>";
 var find5 = '<div class="card-title-icon-block">'
 
-var output = document.getElementById("output");
-
-/*
-(function (logger) {
-    console.old = console.log;
-    console.log = function () {
-        var output = "", arg, i;
-
-        for (i = 0; i < arguments.length; i++) {
-            arg = arguments[i];
-            output += "<span class=\"log-" + (typeof arg) + "\">";
-
-            if (
-                typeof arg === "object" &&
-                typeof JSON === "object" &&
-                typeof JSON.stringify === "function"
-            ) {
-                output += JSON.stringify(arg);   
-            } else {
-                output += arg;   
-            }
-
-            output += "</span>&nbsp;";
-        }
-
-        logger.innerHTML += output + "<br>";
-        console.old.apply(undefined, arguments);
-    };
-})(document.getElementById("logger"));
-*/
 
 https.get(url, res => {
   //console.log(url)
@@ -165,14 +135,14 @@ function iter_pages_search(base, page, start){
 
     		total = body['data']['total_count'];
 
-			output.innerHTML = "=== Page " + page + " ===";
-			output.innerHTML = "start: " + start + " total: " + total;
+			console.log( "=== Page " + page + " ===");
+			console.log( "start: " + start + " total: " + total);
 
 			var i = 0;
 
 			while( true ){
 				try{
-					output.innerHTML = "- " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")";
+					console.log( "- " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")");
 					i+=1;
 				}
 				catch(TypeError){
@@ -201,11 +171,13 @@ function iter_pages_search(base, page, start){
 
 //Function which searches for something within its type (file, dataset, dataverse) and returns all of the urls of objects
 // with that type
-function search_for_all(base, start, type){
-
+window.search_for_all = function (base, start, type, print_dst){
+//    console.log(this);
 	var condition = true;
 
 	var start = start;
+    
+    var op = document.getElementById(print_dst || "output");
 
 	var rows = 10;
 
@@ -234,12 +206,20 @@ function search_for_all(base, start, type){
 
     		total = body['data']['total_count'];
 
-			var i = 0;
+			var i = 1;
+            
 
 			while( true ){
 				try{
+                    li = document.createElement('li');
+                    link = document.createElement('a');
+                    link.appendChild(document.createTextNode(String(i)+". " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")\n"));
+                    link.href = body['data']['items'][i]['url'];
+                    link.target = "_blank";
+                    li.appendChild(link);
+                    op.appendChild(li);
 					//if( body['data']['items'][i]['name'] == query ){
-						output.innerHTML = (i+1) + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")" + " url: " + body['data']['items'][i]['url'];
+//						console.log( op_str );
 						//final = String(body['data']['items'][i]['url']);
 						//console.log(final);
 						//console.log(body['data']['items'][i]['url']);
@@ -317,7 +297,7 @@ function search_for_something(base, start, query, type){
 					if( body['data']['items'][i]['name'] == query ){
 						//console.log( "- " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")" + " url: " + body['data']['items'][i]['url']);
 						final = String(body['data']['items'][i]['url']);
-						output.innerHTML = final;
+						console.log(final);
 						//console.log(body['data']['items'][i]['url']);
 						start = total;
 						break;
@@ -357,3 +337,5 @@ function search_for_something(base, start, query, type){
 //console.log(returned_url);
 
 
+
+},{"https":7,"xml2js":49}]},{},[73]);
