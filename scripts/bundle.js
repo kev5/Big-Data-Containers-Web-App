@@ -13014,11 +13014,13 @@ function iter_pages_search(base, page, start){
 
 //Function which searches for something within its type (file, dataset, dataverse) and returns all of the urls of objects
 // with that type
-function search_for_all(base, start, type){
-
+window.search_for_all = function (base, start, type, print_dst){
+//    console.log(this);
 	var condition = true;
 
 	var start = start;
+    
+    var op = document.getElementById(print_dst || "output");
 
 	var rows = 10;
 
@@ -13047,12 +13049,20 @@ function search_for_all(base, start, type){
 
     		total = body['data']['total_count'];
 
-			var i = 0;
+			var i = 1;
+            
 
 			while( true ){
 				try{
+                    li = document.createElement('li');
+                    link = document.createElement('a');
+                    link.appendChild(document.createTextNode(String(i)+". " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")\n"));
+                    link.href = body['data']['items'][i]['url'];
+                    link.target = "_blank";
+                    li.appendChild(link);
+                    op.appendChild(li);
 					//if( body['data']['items'][i]['name'] == query ){
-						console.log( "- " + body['data']['items'][i]['name'] + "(" + body['data']['items'][i]['type'] + ")" + " url: " + body['data']['items'][i]['url']);
+//						console.log( op_str );
 						//final = String(body['data']['items'][i]['url']);
 						//console.log(final);
 						//console.log(body['data']['items'][i]['url']);
@@ -13166,7 +13176,7 @@ function search_for_something(base, start, query, type){
 //iter_pages_search(demo_url, 1, 0)
 
 //var returned_url = search_for_something(demo_url, 0, 'DatasetDiagram.png', 'file');
-search_for_all(demo_url, 0, 'file')
+//search_for_all(demo_url, 0, 'file')
 //console.log(returned_url);
 
 
