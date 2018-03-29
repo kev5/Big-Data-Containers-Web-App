@@ -16,4 +16,4 @@ The workflow of our entire project can be described as follows-
 
 6. The app does not interact with the broker itself, but it gets injected with the information from a secret. The app basically reads particular environment variables on start-up to get the information from a secret.
 
-Note: This web application is a part of [BU EC528 Cloud Computing](https://github.com/BU-NU-CLOUD-SP18/Big-Data-Containers) project: Big Data Containers.
+*Note*: This web application is a part of [BU EC528 Cloud Computing](https://github.com/BU-NU-CLOUD-SP18/Big-Data-Containers) project: Big Data Containers.
