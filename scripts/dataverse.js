@@ -1,7 +1,5 @@
 var https = require("https");
 
-//var puncycode = require("puncycode");
-
 var parseString = require('xml2js').parseString;
 
 var demo_url = "https://demo.dataverse.org";
@@ -16,8 +14,6 @@ var options = "?q=*&subtree=COSgak";
 var access_uri = "/api/access/datafile/";
 
 var file_id = "2453"; // Got this one from the "trees" query
-
-//const url = "https://api.twitter.com/1.1/search/tweets.json?q=%40twitterapi";
 
 var url = actual_url + options;
 
@@ -40,67 +36,14 @@ https.get(url, res => {
     body += data;
   });
   res.on("end", () => {
-    //body = JSON.parse(body);
-    //var x = parseString(body, {async: true}, function (err, result) { console.dir(result); });
-    //console.log(x);
     
     var stuff = body.slice( body.indexOf(find1), body.indexOf(find2) );
-    //console.log(stuff);
-
-    //while(true){
-    //	try{
-    		
+	  
     		var items = stuff.match(/<div class="card-title-icon-block">/g);
-    		//console.log(items);
-
-
-    		//console.log( stuff.slice( stuff.indexOf(find3), stuff.indexOf(find4) ) );
+    		
     		var tempstring = stuff.replace( stuff.slice( stuff.indexOf(find3), stuff.indexOf(find4) ), "" );
-    		//console.log(tempstring);
-    		//console.log( tempstring.slice( tempstring.indexOf(find3), tempstring.indexOf(find4) ) );
-
-    //	}catch(TypeError){
-
-    //	}
-    //}
-    //console.log( stuff.slice( stuff.indexOf(find3), stuff.indexOf(find4) ) );
-    //console.log( body.slice( body.indexOf(find1), body.indexOf(find2) ) );
-    
-
-    //console.log(body[0])
-
   });
 });
-
-
-/*https.get(url2, res => {
-  res.setEncoding("utf8");
-  let body = "";
-  res.on("data", data => {
-    body += data;
-  });
-  res.on("end", () => {
-    //body = JSON.parse(body);
-    console.log(
-      body
-    );
-  });
-}); */
-
-/*https.get(url3, res => {
-  res.setEncoding("utf8");
-  let body = "";
-  res.on("data", data => {
-    body += data;
-  });
-  res.on("end", () => {
-    //body = JSON.parse(body);
-    console.log(
-      body
-    );
-  });
-});*/
-
 
 //This function allows you to iterate through many of the results that are generated from using the 
 // Search API
@@ -118,8 +61,6 @@ function iter_pages_search(base, page, start){
 
 	const url = base + "/api/search?q=*" + "&start=" + String(start);
 
-	//console.log(url)
-
 	https.get(url, res => {
 
   		res.setEncoding("utf8");
@@ -129,9 +70,6 @@ function iter_pages_search(base, page, start){
   		});
   		res.on("end", () => {
     		body = JSON.parse(body);
-    		//console.log(body['data']['items']);
-
-    		//console.log("here")
 
     		total = body['data']['total_count'];
 
@@ -172,12 +110,12 @@ function iter_pages_search(base, page, start){
 //Function which searches for something within its type (file, dataset, dataverse) and returns all of the urls of objects
 // with that type
 window.search_for_all = function (base, start, type, print_dst){
-//    console.log(this);
+
 	var condition = true;
 
 	var start = start;
     
-    var op = document.getElementById(print_dst || "output");
+        var op = document.getElementById(print_dst || "output");
 
 	var rows = 10;
 
@@ -186,8 +124,6 @@ window.search_for_all = function (base, start, type, print_dst){
 	var final = "";
 
 	const url = base + "/api/search?q=*&type=" + type + "&start=" + String(start);
-
-	//console.log(url)
 
 	https.get(url, res => {
 
@@ -198,12 +134,7 @@ window.search_for_all = function (base, start, type, print_dst){
   		});
   		res.on("end", () => {
     		body = JSON.parse(body);
-    		//console.log(body['data']['items']);
-
-    		//console.log("here")
-
-    		//console.log(body)
-
+			
     		total = body['data']['total_count'];
 
 			var i = 1;
@@ -218,14 +149,6 @@ window.search_for_all = function (base, start, type, print_dst){
                     link.target = "_blank";
                     li.appendChild(link);
                     op.appendChild(li);
-					//if( body['data']['items'][i]['name'] == query ){
-//						console.log( op_str );
-						//final = String(body['data']['items'][i]['url']);
-						//console.log(final);
-						//console.log(body['data']['items'][i]['url']);
-						//start = total;
-						//break;
-					//}
 
 					i+=1;
 				}
@@ -265,13 +188,7 @@ function search_for_something(base, start, query, type){
 
 	var final = "";
 
-	//while(condition){
-
 	const url = base + "/api/search?q=*&type=" + type + "&start=" + String(start);
-
-	//var body;
-
-	//console.log(url)
 
 	https.get(url, res => {
 
@@ -282,11 +199,6 @@ function search_for_something(base, start, query, type){
   		});
   		res.on("end", () => {
     		body = JSON.parse(body);
-    		//console.log(body['data']['items']);
-
-    		//console.log("here")
-
-    		//console.log(body)
 
     		total = body['data']['total_count'];
 
@@ -329,13 +241,5 @@ function search_for_something(base, start, query, type){
 
 
 }
-
-//iter_pages_search(demo_url, 1, 0)
-
-//var returned_url = search_for_something(demo_url, 0, 'DatasetDiagram.png', 'file');
-//search_for_all(demo_url, 0, 'file')
-//console.log(returned_url);
-
-
 
 },{"https":7,"xml2js":49}]},{},[73]);
